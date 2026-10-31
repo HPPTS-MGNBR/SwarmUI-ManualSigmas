@@ -27,10 +27,10 @@ This works with `<base>`, `<refiner>`, `<video>` and `<videoswap>`. A section wi
 ## How it works
 
 - A small ComfyUI file registers `manual` as a scheduler. `SwarmKSampler` and the other samplers accept it unchanged, so variation seed, tiling, previews and other sampler features keep working.
-- The `SwarmSetManualSigmas` node attaches the list to the model, and the scheduler reads it back at sampling time.
+- The `SetManualSigmas` node attaches the list to the model, and the scheduler reads it back at sampling time.
 - SwarmUI adds this node to each model whose section uses `manual`.
 
-![SwarmSetManualSigmas node](Images/node.png)
+![SetManualSigmas node](Images/node.png)
 
 ## Limitations
 

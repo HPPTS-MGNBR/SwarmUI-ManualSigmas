@@ -5,9 +5,9 @@ import comfy.samplers
 
 
 def manual_scheduler(model_sampling, steps):
-    sigmas = getattr(model_sampling, "swarm_manual_sigmas", None)
+    sigmas = getattr(model_sampling, "manual_sigmas", None)
     if sigmas is None:
-        raise ValueError("Scheduler 'manual' requires the model to pass through a SwarmSetManualSigmas node.")
+        raise ValueError("Scheduler 'manual' requires the model to pass through a SetManualSigmas node.")
     # dpm_2 / uni_pc samplers request one extra step then drop the penultimate sigma, so pad to keep the user's list exact
     if len(sigmas) == steps:
         sigmas = sigmas[:-1] + sigmas[-2:]
@@ -27,7 +27,7 @@ def register_manual_scheduler():
 register_manual_scheduler()
 
 
-class SwarmSetManualSigmas:
+class SetManualSigmas:
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -37,7 +37,7 @@ class SwarmSetManualSigmas:
             }
         }
 
-    CATEGORY = "SwarmUI/sampling"
+    CATEGORY = "sampling"
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "apply"
     DESCRIPTION = "Attaches a list of sigmas to the model, used by any sampler whose scheduler is set to 'manual'."
@@ -48,11 +48,11 @@ class SwarmSetManualSigmas:
         register_manual_scheduler()
         m = model.clone()
         model_sampling = copy.copy(m.get_model_object("model_sampling"))
-        model_sampling.swarm_manual_sigmas = values
+        model_sampling.manual_sigmas = values
         m.add_object_patch("model_sampling", model_sampling)
         return (m,)
 
 
 NODE_CLASS_MAPPINGS = {
-    "SwarmSetManualSigmas": SwarmSetManualSigmas,
+    "SetManualSigmas": SetManualSigmas,
 }

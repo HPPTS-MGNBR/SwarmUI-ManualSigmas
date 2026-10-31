@@ -6,7 +6,7 @@ using SwarmUI.Core;
 using SwarmUI.Text2Image;
 using SwarmUI.Utils;
 
-namespace SwarmManualSigmas;
+namespace ManualSigmas;
 
 /// <summary>Adds a 'Manual' scheduler, which uses a user-provided list of sigmas.</summary>
 public class ManualSigmasExtension : Extension
@@ -24,7 +24,7 @@ public class ManualSigmasExtension : Extension
     {
         ScriptFiles.Add("Assets/manual_sigmas.js");
         ComfyUISelfStartBackend.CustomNodePaths.Add(Path.GetFullPath($"{FilePath}ComfyNodes"));
-        ComfyUIBackendExtension.NodeToFeatureMap["SwarmSetManualSigmas"] = "manual_sigmas";
+        ComfyUIBackendExtension.NodeToFeatureMap["SetManualSigmas"] = "manual_sigmas";
     }
 
     public override void OnInit()
@@ -44,7 +44,7 @@ public class ManualSigmasExtension : Extension
             int section = LoadingSection(g);
             if (SchedulerFor(g.UserInput, section) == "manual")
             {
-                string node = g.CreateNode("SwarmSetManualSigmas", new JObject()
+                string node = g.CreateNode("SetManualSigmas", new JObject()
                 {
                     ["model"] = g.LoadingModel,
                     ["sigmas"] = string.Join(", ", GetSigmas(g.UserInput, section).Select(s => s.ToString(CultureInfo.InvariantCulture)))
@@ -110,12 +110,12 @@ public class ManualSigmasExtension : Extension
         return scheduler ?? input.Get(ComfyUIBackendExtension.SchedulerParam, "");
     }
 
-    /// <summary>Walks up a model connection chain to find the sigma list of the nearest SwarmSetManualSigmas node, or null if none is found.</summary>
+    /// <summary>Walks up a model connection chain to find the sigma list of the nearest SetManualSigmas node, or null if none is found.</summary>
     public static string FindUpstreamSigmas(WorkflowGenerator g, JArray model)
     {
         while (model is not null && g.Workflow[$"{model[0]}"] is JObject node)
         {
-            if ($"{node["class_type"]}" == "SwarmSetManualSigmas")
+            if ($"{node["class_type"]}" == "SetManualSigmas")
             {
                 return $"{node["inputs"]["sigmas"]}";
             }
